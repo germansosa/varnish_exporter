@@ -1,0 +1,25 @@
+version: '3'
+services:
+  varnish:
+    image: gsosa/docker-varnish:4.1.4
+    expose:
+     - "8080"
+    volumes:
+     - varnishfs:/varnishfs
+     - ./default.vcl:/etc/varnish/default.vcl
+
+  varnish_exporter:
+    build: .
+    depends_on:
+     - varnish
+    command:
+     - varnish_exporter
+     - "-n"
+     - "/varnishfs/"
+    ports:
+     - "9131:9131"
+    volumes:
+     - varnishfs:/varnishfs
+
+volumes:
+  varnishfs:
